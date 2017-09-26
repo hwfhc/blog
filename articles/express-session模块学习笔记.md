@@ -1,4 +1,4 @@
-#express-session模块学习笔记(init版)
+# express-session模块学习笔记(init版)
 
 ---
 架构：
@@ -7,12 +7,12 @@
 + store：单件，所有session共用一个，由req.sessionStore暴露store
 + memory：继承自store，用于具体存储
 
-##session(主函数):
+## session(主函数):
 传入options对象，返回一个函数（同样名为session）  
 store = new MemoryStore  
 初始化store.generate
 
-####session逻辑结构（返回的函数，中间件函数）
+#### session逻辑结构（返回的函数，中间件函数）
 脉络：挂载sessionID，session对象到req对象上
 + 初始化判断
 + 初始化设置
@@ -56,30 +56,30 @@ originalHash = hash(sess);
 next();  
 
 ---
-##session.js:
-####Session:
+## session.js:
+#### Session:
 生成一个新对象，Object.req = req，Object.id = req.sessionID  
 
-####resetMaxAge:  
+#### resetMaxAge:  
 更新session.cookie.maxAge为originalMaxAge(创建cookie对象时设置，option.cookie对象中设置数值)  
 
-####save:
+#### save:
 调用this.req.sessionStore.set(this.id,fn);
 return this;
 
 ---
 
-##cookie.js
-####Cookie:
+## cookie.js
+#### Cookie:
 传入cookie(配置对象)，初始化配置
 
 ---
 
-##store.js
-####Store:
+## store.js
+#### Store:
 空的
 
-####createSession:
+#### createSession:
 重新加载配置，将新生成session对象挂在到req上  
 sess.cookie  
 req.session  
@@ -90,10 +90,10 @@ sess.cookie.expires
 
 ---
 
-##memory.js(继承自store)
-####MemoryStore:
+## memory.js(继承自store)
+#### MemoryStore:
 创建新对象，设置对象sessions为空
-####MemoryStore.prototype.get:
+#### MemoryStore.prototype.get:
 通过sessionID获得 一个sess  
 
 传入req.sessionID和一个函数  
@@ -109,7 +109,7 @@ expires = sess.cookie.expires(这是一个时间)
 
 否则this.destroy(req.sessionID,fn)  
 
-####MemoryStore.prototype.set:
+#### MemoryStore.prototype.set:
 存储一个session
 
 this.sessions[sessionID] = sess转化为JSON形式
