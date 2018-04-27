@@ -1,8 +1,8 @@
-## koa学习笔记
+# koa学习笔记
 最近因为种种原因需要使用koa框架，所以写了篇笔记记录我对koa框架源码的学习。   
 虽然写完后才发现网上已经有很多类似的了。。。。   
 
-### 简介
+## 简介
 koa是由express原班人马打造的下一代nodejs框架，反正就是很屌啦。   
 相对express框架主要改进为洋葱模型，也可以理解为一个栈，   
 而express则是简单的中间件流水线式处理请求。   
@@ -10,7 +10,7 @@ koa是由express原班人马打造的下一代nodejs框架，反正就是很屌�
 为啥他们当时不直接写koa要先写个express呢？   
 我认为是由于async函数的普及，基础决定上层建筑，整个koa的中间件机制都是基于async函数和promise对象实现的。  
 
-### 中间件机制：
+## 中间件机制：
 中间件机制是koa框架的核心，事实上koa框架的源码只有中间件机制的逻辑代码和context、request、response这三个对象的封装。    
 
 其他的功能均由插件作为中间件来实现。   
@@ -28,7 +28,7 @@ koa是由express原班人马打造的下一代nodejs框架，反正就是很屌�
 而在koa中，中间件处理的相关逻辑代码被分离到了每个中间件定义的地方，而不是将所有逻辑代码堆在一起，相比express可维护性更强。
 
 
-### 例子
+## 例子
 在讨论中间件机制的实现前我们先给出一个例子：
 ```js 
 const Koa = require('koa');
@@ -72,7 +72,7 @@ app.listen(8080);
 
 而中间件3则没有await next（）代码，因为他已经是最末的一个中间件，所以不需要使用next调用。
 
-### 源码分析：   
+## 源码分析：   
 翻开koa在github 的源码，我们会发现其核心代码只有1600行，   
 文件只有4个，分别为：
 + application.js:   
@@ -87,19 +87,19 @@ response答复对象的封装代码
 
 是的koa框架只有这几个对象以及中间件的运作机制，其他均由插入的中间件来实现。
 
-### 实现：
+## 实现：
 koa的中间件机制基于async函数实现，这也就是为什么koa官方文档一定要告诉你如何在不同版本node中使用async函数。  
 
 application.js文件创建的koa实例其实只对外暴露了5个接口，  
 listen、use、callback、toJSON、inspect   
 其中后两个接口不属于核心逻辑，我们重点讨论前三个接口。   
 
-#### use:
+### use:
 use的逻辑很简单，只是把传入的中间件函数添加到本koa示例的数组中去。   
 
 当然在此之前会判断一下传入的参数是否是函数，以及是否是generator函数，如果是则会转换成promise，这就是历史的包袱了。
 
-#### listen：   
+### listen：   
 listen函数实质上是对node http函数调用的一层封装，   
 简化后只有如下两行：   
 ```
@@ -110,7 +110,7 @@ listen(...args) {
 ```
 他首先使用node的http模块创建了http服务器，并且将this.callback()的返回值作为回调函数，然后再启动http服务器。     
   
-#### callback:  
+### callback:  
 好了，这个接口就是我们整个中间件机制的核心部分了。   
 下面是简化后的代码： 
 
@@ -150,7 +150,7 @@ handleRequest函数是最顶层的一次请求处理，他启动了第一个fnMi
 
 同样，handleResponse函数也只运行一次
 
-#### compose
+### compose
 
 callback函数中koa实例的中间件数组作为参数传入compose函数，再被赋值给fn变量。    
 其中compose函数对koa示例的middleware数组进行了处理，使其具有链式异步调用的能力。
@@ -183,11 +183,10 @@ function compose (middleware) {
 
 我只需要每次调用均保证下次调用能调用到下一个中间件函数即可，不断调用即可完成遍历。这也就是遍历器的一种应用。
 
-### 参考资料
----
-阮一峰koa教程：    
+## 参考资料
++ 阮一峰koa教程：    
 http://www.ruanyifeng.com/blog/2017/08/koa.html   
-Koa中间件（middleware）实现探索：   
++ Koa中间件（middleware）实现探索：   
 https://www.jianshu.com/p/a30c193f6e61   
-浅析koa的洋葱模型实现：   
++ 浅析koa的洋葱模型实现：   
 https://segmentfault.com/a/1190000013981513
