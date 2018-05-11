@@ -152,9 +152,7 @@ ssthresh值被修改为cwnd / 2，然后将cwnd设为1 MSS。并且进入慢启�
 + 发送者发包，ACK字段为1
 + 接收者收到含ACK字段的报文，进行一些处理关闭连接
 
-### 七、总结
-
-### 参考资料：
+## 参考资料：
 + TCP拥塞控制：                                                                                                                                                                                                                                                                                                                                                                                          https://www.zhihu.com/question/58517416/answer/158142955 
 + TCP重传：    
 https://stackoverflow.com/questions/12956685/what-are-the-retransmission-rules-for-tcp
